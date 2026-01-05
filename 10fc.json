@@ -1,0 +1,97 @@
+{
+    "name": "10星全连表",
+    "level": 10,
+    "type": "fc",
+    "sections": [
+        {
+            "name": "地力SS",
+            "order": 0,
+            "songs": [
+                {
+                    "id": "1",
+                    "difficulty": 5
+                }
+            ]
+        },
+        {
+            "name": "地力S+",
+            "order": 1,
+            "songs": []
+        },
+        {
+            "name": "个人差S+",
+            "order": 2,
+            "songs": []
+        },
+        {
+            "name": "地力S",
+            "order": 3,
+            "songs": []
+        },
+        {
+            "name": "个人差S",
+            "order": 4,
+            "songs": []
+        },
+        {
+            "name": "地力A+",
+            "order": 5,
+            "songs": []
+        },
+        {
+            "name": "地力A",
+            "order": 6,
+            "songs": []
+        },
+        {
+            "name": "个人差A",
+            "order": 7,
+            "songs": []
+        },
+        {
+            "name": "地力B+",
+            "order": 8,
+            "songs": []
+        },
+        {
+            "name": "地力B",
+            "order": 9,
+            "songs": []
+        },
+        {
+            "name": "个人差B",
+            "order": 10,
+            "songs": []
+        },
+        {
+            "name": "地力C+",
+            "order": 11,
+            "songs": []
+        },
+        {
+            "name": "地力C",
+            "order": 12,
+            "songs": []
+        },
+        {
+            "name": "个人差C",
+            "order": 13,
+            "songs": []
+        },
+        {
+            "name": "地力D",
+            "order": 14,
+            "songs": []
+        },
+        {
+            "name": "地力E",
+            "order": 15,
+            "songs": []
+        },
+        {
+            "name": "地力F",
+            "order": 16,
+            "songs": []
+        }
+    ]
+}

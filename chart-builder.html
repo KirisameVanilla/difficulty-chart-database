@@ -175,6 +175,28 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 15px;
             margin-top: 15px;
+            max-height: 700px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 8px;
+        }
+
+        .sections-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sections-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .sections-container::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .sections-container::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
         }
 
         .section {

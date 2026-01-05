@@ -470,6 +470,7 @@
                 <h2>分类管理</h2>
                 <div class="export-section">
                     <div class="button-group">
+                        <button onclick="toggleEditMode()" id="editModeBtn">✏️ 编辑模式</button>
                         <button onclick="addSection()">➕ 添加分类</button>
                         <button onclick="clearAll()">🗑️ 清空所有</button>
                         <button onclick="exportJSON()">📥 导出 JSON</button>
@@ -516,6 +517,7 @@
         let allSongs = [];
         let sections = [];
         let activeDifficultyFilters = [4, 5];
+        let editMode = false;
 
         // 初始化分类
         function initSections() {
@@ -544,6 +546,20 @@
                 songs: []
             }));
 
+            renderSections();
+        }
+
+        // 切换编辑模式
+        function toggleEditMode() {
+            editMode = !editMode;
+            const btn = document.getElementById('editModeBtn');
+            if (editMode) {
+                btn.style.background = '#764ba2';
+                btn.textContent = '✏️ 编辑模式 (ON)';
+            } else {
+                btn.style.background = '#667eea';
+                btn.textContent = '✏️ 编辑模式';
+            }
             renderSections();
         }
 
@@ -706,6 +722,10 @@
 
         // 处理分类拖拽开始
         function handleSectionDragStart(e, index) {
+            if (!editMode) {
+                e.preventDefault();
+                return;
+            }
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('sectionMove', index.toString());
             e.target.style.opacity = '0.5';
@@ -713,6 +733,7 @@
 
         // 处理分类拖拽悬停
         function handleSectionDragOver(e) {
+            if (!editMode) return;
             e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             const section = e.target.closest('.section');
@@ -724,6 +745,10 @@
 
         // 处理分类放置
         function handleSectionDrop(e, toIndex) {
+            if (!editMode) {
+                e.preventDefault();
+                return;
+            }
             e.preventDefault();
             e.stopPropagation();
             
@@ -754,14 +779,46 @@
                 const div = document.createElement('div');
                 div.className = 'section';
                 div.dataset.sectionIndex = index;
-                div.draggable = true;
-                div.addEventListener('dragstart', (e) => handleSectionDragStart(e, index));
-                div.addEventListener('dragover', handleSectionDragOver);
-                div.addEventListener('drop', (e) => handleSectionDrop(e, index));
-                div.addEventListener('dragend', handleDragEnd);
+                
+                if (editMode) {
+                    div.draggable = true;
+                    div.addEventListener('dragstart', (e) => {
+                        // 只有从拖拽把手开始的拖拽才响应
+                        if (e.target.textContent !== '☰') {
+                            e.preventDefault();
+                        }
+                    });
+                    div.addEventListener('dragover', handleSectionDragOver);
+                    div.addEventListener('drop', (e) => handleSectionDrop(e, index));
+                    div.addEventListener('dragend', handleDragEnd);
+                    div.style.cursor = 'default';
+                } else {
+                    div.draggable = false;
+                    div.style.cursor = 'default';
+                }
 
                 const header = document.createElement('div');
                 header.className = 'section-header';
+                
+                // 拖拽把手（只在编辑模式下显示）
+                if (editMode) {
+                    const dragHandle = document.createElement('span');
+                    dragHandle.innerHTML = '☰';
+                    dragHandle.style.marginRight = '8px';
+                    dragHandle.style.cursor = 'grab';
+                    dragHandle.style.fontSize = '18px';
+                    dragHandle.style.userSelect = 'none';
+                    dragHandle.draggable = true;
+                    dragHandle.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.effectAllowed = 'move';
+                        e.dataTransfer.setData('sectionMove', index.toString());
+                        dragHandle.style.cursor = 'grabbing';
+                    });
+                    dragHandle.addEventListener('dragend', (e) => {
+                        dragHandle.style.cursor = 'grab';
+                    });
+                    header.appendChild(dragHandle);
+                }
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = `${section.name} (${section.songs.length})`;
@@ -857,12 +914,14 @@
         function handleDragOver(e) {
             e.preventDefault();
             e.dataTransfer.dropEffect = 'copy';
-            e.target.closest('.section')?.classList.add('drag-over');
+            const section = e.target.closest('.section') || e.target.closest('.section-songs')?.closest('.section');
+            section?.classList.add('drag-over');
         }
 
         // 处理拖拽离开
         function handleDragLeave(e) {
-            if (!e.target.closest('.section')?.contains(e.relatedTarget)) {
+            const section = e.target.closest('.section');
+            if (section && !section.contains(e.relatedTarget)) {
                 document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
             }
         }
@@ -870,6 +929,7 @@
         // 处理歌曲放置
         function handleSongDrop(e, sectionIndex) {
             e.preventDefault();
+            e.stopPropagation();
             document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
 
             const cardMoveData = e.dataTransfer.getData('cardMove');
@@ -1012,8 +1072,10 @@
                         const songData = allSongs.find(s => s.id === song.id.toString());
                         return {
                             id: song.id.toString(),
+                            songNo: songData?.songNo || song.id,
                             title: songData?.title || '未知歌曲',
-                            difficulty: song.difficulty
+                            difficulty: song.difficulty,
+                            level: songData?.level || 0
                         };
                     })
                 }));

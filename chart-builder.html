@@ -1,889 +1,927 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>太鼓难度表生成器</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>太鼓难度表生成器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f5f5;
-            color: #333;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
 
-        header {
-            background: #667eea;
-            color: white;
-            padding: 30px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+    header {
+      background: #667eea;
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
 
-        .header-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
-        }
+    .header-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
 
-        .header-controls input,
-        .header-controls select {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.9);
-        }
+    .header-controls input,
+    .header-controls select {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.9);
+    }
 
-        .header-controls input {
-            min-width: 150px;
-        }
+    .header-controls input {
+      min-width: 150px;
+    }
 
-        button {
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
+    button {
+      padding: 10px 20px;
+      background: #667eea;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
 
-        button:hover {
-            background: #764ba2;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    button:hover {
+      background: #764ba2;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
-        .button-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
 
-        .panel {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    .panel {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-        .panel h2 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #667eea;
-        }
+    .panel h2 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #667eea;
+    }
 
-        .song-list {
-            max-height: 600px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
+    .song-list {
+      max-height: 600px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
 
-        .song-item {
-            padding: 10px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: move;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f9f9f9;
-            user-select: none;
-            transition: all 0.2s;
-        }
+    .song-item {
+      padding: 10px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: move;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f9f9f9;
+      user-select: none;
+      transition: all 0.2s;
+    }
 
-        .song-item:hover {
-            background: #f0f0f0;
-        }
+    .song-item:hover {
+      background: #f0f0f0;
+    }
 
-        .song-item.dragging {
-            opacity: 0.5;
-            background: #e8e8e8;
-        }
+    .song-item.dragging {
+      opacity: 0.5;
+      background: #e8e8e8;
+    }
 
-        .song-info {
-            flex: 1;
-            min-width: 0;
-        }
+    .song-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-        .song-title {
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .song-title {
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        .song-no {
-            font-size: 12px;
-            color: #999;
-        }
+    .song-no {
+      font-size: 12px;
+      color: #999;
+    }
 
-        .difficulty-selector {
-            display: flex;
-            gap: 5px;
-        }
+    .difficulty-selector {
+      display: flex;
+      gap: 5px;
+    }
 
-        .difficulty-btn {
-            padding: 5px 8px;
-            font-size: 12px;
-            background: #e8e8e8;
-            color: #666;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    .difficulty-btn {
+      padding: 5px 8px;
+      font-size: 12px;
+      background: #e8e8e8;
+      color: #666;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .difficulty-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
+    .difficulty-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
 
-        .difficulty-btn:hover {
-            border-color: #667eea;
-        }
+    .difficulty-btn:hover {
+      border-color: #667eea;
+    }
 
-        .sections-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-            max-height: 700px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 8px;
-        }
+    .sections-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+      max-height: 700px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 8px;
+    }
 
-        .sections-container::-webkit-scrollbar {
-            width: 8px;
-        }
+    .sections-container::-webkit-scrollbar {
+      width: 8px;
+    }
 
-        .sections-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
+    .sections-container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
 
-        .sections-container::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 10px;
-        }
+    .sections-container::-webkit-scrollbar-thumb {
+      background: #667eea;
+      border-radius: 10px;
+    }
 
-        .sections-container::-webkit-scrollbar-thumb:hover {
-            background: #764ba2;
-        }
+    .sections-container::-webkit-scrollbar-thumb:hover {
+      background: #764ba2;
+    }
 
-        .section {
-            background: #f9f9f9;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            min-height: 400px;
-            transition: all 0.3s;
-        }
+    .section {
+      background: #f9f9f9;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      min-height: 400px;
+      transition: all 0.3s;
+    }
 
-        .section.drag-over {
-            background: #f0f7ff;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+    .section.drag-over {
+      background: #f0f7ff;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
 
-        .section-header {
-            font-weight: 600;
-            margin-bottom: 10px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #667eea;
-            color: #667eea;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .section-header {
+      font-weight: 600;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #667eea;
+      color: #667eea;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-        .section-songs {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            min-height: 350px;
-        }
+    .section-songs {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 350px;
+    }
 
-        .song-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: move;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-            user-select: none;
-        }
+    .song-card {
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      padding: 10px;
+      cursor: move;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      user-select: none;
+    }
 
-        .song-card:hover {
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
+    .song-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border-color: #667eea;
+    }
 
-        .song-card.dragging {
-            opacity: 0.5;
-            background: #f5f5f5;
-        }
+    .song-card.dragging {
+      opacity: 0.5;
+      background: #f5f5f5;
+    }
 
-        .song-card-info {
-            flex: 1;
-            min-width: 0;
-        }
+    .song-card-info {
+      flex: 1;
+      min-width: 0;
+    }
 
-        .song-card-title {
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    .song-card-title {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-        .song-card-no {
-            font-size: 11px;
-            color: #999;
-        }
+    .song-card-no {
+      font-size: 11px;
+      color: #999;
+    }
 
-        .remove-btn {
-            padding: 4px 8px;
-            font-size: 12px;
-            background: #f44336;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
+    .remove-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
 
-        .remove-btn:hover {
-            background: #d32f2f;
-        }
+    .remove-btn:hover {
+      background: #d32f2f;
+    }
 
-        .search-box {
-            margin-bottom: 15px;
-        }
+    .search-box {
+      margin-bottom: 15px;
+    }
 
-        .search-box input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
+    .search-box input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+    }
 
-        .stats {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
-            font-size: 13px;
-        }
+    .stats {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
 
-        .stat-item {
-            background: #f0f0f0;
-            padding: 8px 12px;
-            border-radius: 5px;
-        }
+    .stat-item {
+      background: #f0f0f0;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
 
-        .export-section {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
+    .export-section {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+    }
 
-        .difficulty-filter {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
-        }
+    .difficulty-filter {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
 
-        .filter-btn {
-            padding: 6px 12px;
-            font-size: 12px;
-            background: #e8e8e8;
-            color: #666;
-            border: 1px solid #ccc;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+    .filter-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      background: #e8e8e8;
+      color: #666;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
-        .filter-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
+    .filter-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
 
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
 
-            .sections-container {
-                grid-template-columns: 1fr;
-            }
+      .sections-container {
+        grid-template-columns: 1fr;
+      }
 
-            .header-controls {
-                flex-direction: column;
-            }
+      .header-controls {
+        flex-direction: column;
+      }
 
-            .header-controls input,
-            .header-controls select {
-                width: 100%;
-            }
-        }
+      .header-controls input,
+      .header-controls select {
+        width: 100%;
+      }
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s;
-        }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.3s;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
 
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
+      to {
+        opacity: 1;
+      }
+    }
 
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #ddd;
-        }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 600px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
 
-        .close-btn {
-            font-size: 28px;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 0;
-            line-height: 1;
-        }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+    }
 
-        .close-btn:hover {
-            color: #000;
-            transform: none;
-        }
+    .close-btn {
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      line-height: 1;
+    }
 
-        .json-output {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            white-space: pre-wrap;
-            word-break: break-all;
-            max-height: 400px;
-            overflow-y: auto;
-        }
+    .close-btn:hover {
+      color: #000;
+      transform: none;
+    }
 
-        .button-row {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
+    .json-output {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 400px;
+      overflow-y: auto;
+    }
 
-        .button-row button {
-            flex: 1;
-        }
-    </style>
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .button-row button {
+      flex: 1;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <header>
-            <h1>太鼓难度表生成器</h1>
-            <div class="header-controls">
-                <input type="text" id="tableName" placeholder="难度表名称" value="10星全连表">
-                <select id="tableLevel">
-                    <option value="1">1星</option>
-                    <option value="2">2星</option>
-                    <option value="3">3星</option>
-                    <option value="4">4星</option>
-                    <option value="5">5星</option>
-                    <option value="6">6星</option>
-                    <option value="7">7星</option>
-                    <option value="8">8星</option>
-                    <option value="9">9星</option>
-                    <option value="10" selected>10星</option>
-                </select>
-                <select id="tableType">
-                    <option value="fc">全连 (FC)</option>
-                    <option value="ap">完美 (AP)</option>
-                    <option value="clear">通关 (Clear)</option>
-                </select>
-                <input type="file" id="songsFile" accept=".json" style="display: none;">
-                <button onclick="document.getElementById('songsFile').click()">📂 选择 songs.json</button>
-                <span id="fileStatus" style="color: white; font-size: 14px;"></span>
-            </div>
-        </header>
+  <div class="container">
+    <header>
+      <h1>太鼓难度表生成器</h1>
+      <div class="header-controls">
+        <input type="text" id="tableName" placeholder="难度表名称" value="10星全连表">
+        <select id="tableLevel">
+          <option value="1">1星</option>
+          <option value="2">2星</option>
+          <option value="3">3星</option>
+          <option value="4">4星</option>
+          <option value="5">5星</option>
+          <option value="6">6星</option>
+          <option value="7">7星</option>
+          <option value="8">8星</option>
+          <option value="9">9星</option>
+          <option value="10" selected>10星</option>
+        </select>
+        <select id="tableType">
+          <option value="fc">全连 (FC)</option>
+          <option value="ap">完美 (AP)</option>
+          <option value="clear">通关 (Clear)</option>
+        </select>
+        <button onclick="loadSongsFromApi()">🔄 重新加载歌曲库</button>
+        <span id="fileStatus" style="color: white; font-size: 14px;"></span>
+      </div>
+    </header>
 
-        <div class="main-content">
-            <!-- 左侧：歌曲列表 -->
-            <div class="panel">
-                <h2>歌曲库</h2>
-                <div class="search-box">
-                    <input type="text" id="songSearch" placeholder="搜索歌曲名称...">
-                </div>
-                <div class="difficulty-filter">
-                    <button class="filter-btn active" data-difficulty="4" onclick="filterDifficulty(4, this)">oni (4)</button>
-                    <button class="filter-btn active" data-difficulty="5" onclick="filterDifficulty(5, this)">ura (5)</button>
-                </div>
-                <div class="stats">
-                    <div class="stat-item">总歌曲: <span id="totalSongs">0</span></div>
-                    <div class="stat-item">已添加: <span id="addedSongs">0</span></div>
-                </div>
-                <div class="song-list" id="songList"></div>
-            </div>
-
-            <!-- 右侧：分类区域 -->
-            <div class="panel">
-                <h2>分类管理</h2>
-                <div class="export-section">
-                    <div class="button-group">
-                        <button onclick="toggleEditMode()" id="editModeBtn">✏️ 编辑模式</button>
-                        <button onclick="addSection()">➕ 添加分类</button>
-                        <button onclick="clearAll()">🗑️ 清空所有</button>
-                        <button onclick="exportJSON()">📥 导出 JSON</button>
-                        <button onclick="importJSON()">📤 导入 JSON</button>
-                    </div>
-                </div>
-                <div class="sections-container" id="sectionsContainer"></div>
-            </div>
+    <div class="main-content">
+      <!-- 左侧：歌曲列表 -->
+      <div class="panel">
+        <h2>歌曲库</h2>
+        <div class="search-box">
+          <input type="text" id="songSearch" placeholder="搜索歌曲名称...">
         </div>
-    </div>
-
-    <!-- 导出JSON模态框 -->
-    <div id="exportModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>导出 JSON</h2>
-                <button class="close-btn" onclick="closeExportModal()">&times;</button>
-            </div>
-            <div class="json-output" id="jsonOutput"></div>
-            <div class="button-row">
-                <button onclick="copyJSON()">📋 复制到剪贴板</button>
-                <button onclick="downloadJSON()">💾 下载文件</button>
-                <button onclick="closeExportModal()">关闭</button>
-            </div>
+        <div class="difficulty-filter">
+          <button class="filter-btn active" data-difficulty="4" onclick="filterDifficulty(4, this)">oni (4)</button>
+          <button class="filter-btn active" data-difficulty="5" onclick="filterDifficulty(5, this)">ura (5)</button>
         </div>
-    </div>
-
-    <!-- 导入JSON模态框 -->
-    <div id="importModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>导入 JSON</h2>
-                <button class="close-btn" onclick="closeImportModal()">&times;</button>
-            </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 10px; font-weight: 500;">选择文件或粘贴JSON内容：</label>
-                <input type="file" id="importJsonFile" accept=".json" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
-                <div style="text-align: center; margin: 15px 0; color: #999;">或</div>
-            </div>
-            <textarea id="jsonInput" style="width: 100%; height: 300px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 12px;" placeholder="粘贴 JSON 内容..."></textarea>
-            <div class="button-row">
-                <button onclick="loadImportedJSON()">导入</button>
-                <button onclick="closeImportModal()">取消</button>
-            </div>
+        <div class="stats">
+          <div class="stat-item">总歌曲: <span id="totalSongs">0</span></div>
+          <div class="stat-item">已添加: <span id="addedSongs">0</span></div>
         </div>
+        <div class="song-list" id="songList"></div>
+      </div>
+
+      <!-- 右侧：分类区域 -->
+      <div class="panel">
+        <h2>分类管理</h2>
+        <div class="export-section">
+          <div class="button-group">
+            <button onclick="toggleEditMode()" id="editModeBtn">✏️ 编辑模式</button>
+            <button onclick="addSection()">➕ 添加分类</button>
+            <button onclick="clearAll()">🗑️ 清空所有</button>
+            <button onclick="exportJSON()">📥 导出 JSON</button>
+            <button onclick="importJSON()">📤 导入 JSON</button>
+          </div>
+        </div>
+        <div class="sections-container" id="sectionsContainer"></div>
+      </div>
     </div>
+  </div>
 
-    <script>
-        let allSongs = [];
-        let sections = [];
-        let activeDifficultyFilters = [4, 5];
-        let editMode = false;
+  <!-- 导出JSON模态框 -->
+  <div id="exportModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>导出 JSON</h2>
+        <button class="close-btn" onclick="closeExportModal()">&times;</button>
+      </div>
+      <div class="json-output" id="jsonOutput"></div>
+      <div class="button-row">
+        <button onclick="copyJSON()">📋 复制到剪贴板</button>
+        <button onclick="downloadJSON()">💾 下载文件</button>
+        <button onclick="closeExportModal()">关闭</button>
+      </div>
+    </div>
+  </div>
 
-        // 初始化分类
-        function initSections() {
-            const sectionNames = [
-                { name: "地力SS", order: 0 },
-                { name: "地力S+", order: 1 },
-                { name: "个人差S+", order: 2 },
-                { name: "地力S", order: 3 },
-                { name: "个人差S", order: 4 },
-                { name: "地力A+", order: 5 },
-                { name: "地力A", order: 6 },
-                { name: "个人差A", order: 7 },
-                { name: "地力B+", order: 8 },
-                { name: "地力B", order: 9 },
-                { name: "个人差B", order: 10 },
-                { name: "地力C+", order: 11 },
-                { name: "地力C", order: 12 },
-                { name: "个人差C", order: 13 },
-                { name: "地力D", order: 14 },
-                { name: "地力E", order: 15 },
-                { name: "地力F", order: 16 }
-            ];
+  <!-- 导入JSON模态框 -->
+  <div id="importModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>导入 JSON</h2>
+        <button class="close-btn" onclick="closeImportModal()">&times;</button>
+      </div>
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: 500;">选择文件或粘贴JSON内容：</label>
+        <input type="file" id="importJsonFile" accept=".json"
+          style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+        <div style="text-align: center; margin: 15px 0; color: #999;">或</div>
+      </div>
+      <textarea id="jsonInput"
+        style="width: 100%; height: 300px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: monospace; font-size: 12px;"
+        placeholder="粘贴 JSON 内容..."></textarea>
+      <div class="button-row">
+        <button onclick="loadImportedJSON()">导入</button>
+        <button onclick="closeImportModal()">取消</button>
+      </div>
+    </div>
+  </div>
 
-            sections = sectionNames.map(s => ({
-                ...s,
-                songs: []
-            }));
+  <script>
+    let allSongs = [];
+    let sections = [];
+    let activeDifficultyFilters = [4, 5];
+    let editMode = false;
+    const SONG_API_ENDPOINTS = ['/api/song', 'https://taiko.wiki/api/song'];
 
-            renderSections();
+    // 初始化分类
+    function initSections() {
+      const sectionNames = [
+        { name: "地力SS", order: 0 },
+        { name: "地力S+", order: 1 },
+        { name: "个人差S+", order: 2 },
+        { name: "地力S", order: 3 },
+        { name: "个人差S", order: 4 },
+        { name: "地力A+", order: 5 },
+        { name: "地力A", order: 6 },
+        { name: "个人差A", order: 7 },
+        { name: "地力B+", order: 8 },
+        { name: "地力B", order: 9 },
+        { name: "个人差B", order: 10 },
+        { name: "地力C+", order: 11 },
+        { name: "地力C", order: 12 },
+        { name: "个人差C", order: 13 },
+        { name: "地力D", order: 14 },
+        { name: "地力E", order: 15 },
+        { name: "地力F", order: 16 }
+      ];
+
+      sections = sectionNames.map(s => ({
+        ...s,
+        songs: []
+      }));
+
+      renderSections();
+    }
+
+    // 切换编辑模式
+    function toggleEditMode() {
+      editMode = !editMode;
+      const btn = document.getElementById('editModeBtn');
+      if (editMode) {
+        btn.style.background = '#764ba2';
+        btn.textContent = '✏️ 编辑模式 (ON)';
+      } else {
+        btn.style.background = '#667eea';
+        btn.textContent = '✏️ 编辑模式';
+      }
+      renderSections();
+    }
+
+    // 将歌曲数据展开为谱面库：每个歌曲的每个难度成为一个独立谱面
+    function buildChartsFromSongs(data) {
+      if (!Array.isArray(data)) {
+        throw new Error('API 返回的数据格式不是数组');
+      }
+
+      const charts = [];
+      data.forEach(song => {
+        if (song.isDeleted === 0 && song.courses) {
+          // oni 谱面（难度4）
+          if (song.courses.oni) {
+            charts.push({
+              id: `${song.songNo}_4`,
+              songNo: song.songNo,
+              difficulty: 4,
+              level: song.courses.oni.level,
+              title: song.titleZhCN || song.title || song.titleKo || song.titleEn || '未知歌曲'
+            });
+          }
+          // ura 谱面（难度5）
+          if (song.courses.ura) {
+            charts.push({
+              id: `${song.songNo}_5`,
+              songNo: song.songNo,
+              difficulty: 5,
+              level: song.courses.ura.level,
+              title: song.titleZhCN || song.title || song.titleKo || song.titleEn || '未知歌曲'
+            });
+          }
         }
+      });
 
-        // 切换编辑模式
-        function toggleEditMode() {
-            editMode = !editMode;
-            const btn = document.getElementById('editModeBtn');
-            if (editMode) {
-                btn.style.background = '#764ba2';
-                btn.textContent = '✏️ 编辑模式 (ON)';
-            } else {
-                btn.style.background = '#667eea';
-                btn.textContent = '✏️ 编辑模式';
-            }
-            renderSections();
-        }
+      allSongs = charts.sort((a, b) => a.title.localeCompare(b.title));
+      renderSongList();
+      updateStats();
+      document.getElementById('fileStatus').textContent = `✓ 已加载 ${allSongs.length} 个谱面`;
+    }
 
-        // 加载歌曲数据
-        function loadSongsData(file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    // 展开为谱面库：每个歌曲的每个难度成为一个独立谱面
-                    const charts = [];
-                    data.forEach(song => {
-                        if (song.isDeleted === 0 && song.courses) {
-                            // oni 谱面（难度4）
-                            if (song.courses.oni) {
-                                charts.push({
-                                    id: `${song.songNo}_4`,
-                                    songNo: song.songNo,
-                                    difficulty: 4,
-                                    level: song.courses.oni.level,
-                                    title: song.title || song.titleKo || song.titleEn || '未知歌曲'
-                                });
-                            }
-                            // ura 谱面（难度5）
-                            if (song.courses.ura) {
-                                charts.push({
-                                    id: `${song.songNo}_5`,
-                                    songNo: song.songNo,
-                                    difficulty: 5,
-                                    level: song.courses.ura.level,
-                                    title: song.title || song.titleKo || song.titleEn || '未知歌曲'
-                                });
-                            }
-                        }
-                    });
-                    
-                    allSongs = charts.sort((a, b) => a.title.localeCompare(b.title));
-                    
-                    renderSongList();
-                    updateStats();
-                    document.getElementById('fileStatus').textContent = `✓ 已加载 ${allSongs.length} 个谱面`;
-                } catch (error) {
-                    console.error('加载谱面库失败:', error);
-                    alert('加载失败: ' + error.message);
-                    document.getElementById('fileStatus').textContent = '❌ 加载失败';
-                }
-            };
-            reader.readAsText(file);
-        }
+    // 从 API 加载歌曲数据
+    async function loadSongsFromApi() {
+      const fileStatus = document.getElementById('fileStatus');
+      fileStatus.textContent = '加载中...';
 
-        // 文件选择事件
-        document.addEventListener('DOMContentLoaded', function() {
-            const fileInput = document.getElementById('songsFile');
-            if (fileInput) {
-                fileInput.addEventListener('change', function(e) {
-                    if (e.target.files && e.target.files[0]) {
-                        loadSongsData(e.target.files[0]);
-                    }
-                });
-            }
-        });
+      if (window.location.protocol === 'file:') {
+        fileStatus.textContent = '⚠️ 请用本地服务器打开页面（不要直接双击 html）';
+      }
 
-        // 筛选难度
-        function filterDifficulty(difficulty, button) {
-            const index = activeDifficultyFilters.indexOf(difficulty);
-            if (index > -1) {
-                activeDifficultyFilters.splice(index, 1);
-                button.classList.remove('active');
-            } else {
-                activeDifficultyFilters.push(difficulty);
-                button.classList.add('active');
-            }
-            renderSongList();
-        }
+      try {
+        let lastError = null;
 
-        // 渲染谱面列表
-        function renderSongList() {
-            const searchTerm = document.getElementById('songSearch').value.toLowerCase();
-            const selectedLevel = parseInt(document.getElementById('tableLevel').value);
-            const songList = document.getElementById('songList');
-            songList.innerHTML = '';
-
-            const filteredSongs = allSongs.filter(chart => {
-                const matchesSearch = chart.title.toLowerCase().includes(searchTerm);
-                const hasActiveDifficulty = activeDifficultyFilters.includes(chart.difficulty);
-                const matchesLevel = chart.level >= selectedLevel;
-                
-                // 检查该谱面是否已被添加
-                const alreadyAdded = sections.some(section => 
-                    section.songs.some(s => s.id === chart.id)
-                );
-                
-                return matchesSearch && hasActiveDifficulty && matchesLevel && !alreadyAdded;
+        for (const endpoint of SONG_API_ENDPOINTS) {
+          try {
+            const response = await fetch(endpoint, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/json'
+              }
             });
 
-            filteredSongs.forEach(chart => {
-                const div = document.createElement('div');
-                div.className = 'song-item';
-                div.draggable = true;
-                div.dataset.songId = chart.id;
+            if (!response.ok) {
+              throw new Error(`${endpoint} -> HTTP ${response.status}`);
+            }
 
-                const diffLabel = chart.difficulty === 4 ? 'oni' : 'ura';
+            const result = await response.json();
+            const songs = Array.isArray(result)
+              ? result
+              : (Array.isArray(result?.data) ? result.data : (Array.isArray(result?.songs) ? result.songs : null));
 
-                div.innerHTML = `
+            buildChartsFromSongs(songs);
+            fileStatus.textContent = `✓ 已加载 ${allSongs.length} 个谱面（来源: ${endpoint}）`;
+            return;
+          } catch (endpointError) {
+            lastError = endpointError;
+          }
+        }
+
+        throw lastError || new Error('所有数据源均加载失败');
+      } catch (error) {
+        console.error('从 API 加载谱面库失败:', error);
+        alert('从 API 加载失败。若出现 CORS，请使用 proxy-server.js 在 http://localhost:8080 打开页面。\n\n错误详情: ' + error.message);
+        fileStatus.textContent = '❌ API 加载失败';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      loadSongsFromApi();
+    });
+
+    // 筛选难度
+    function filterDifficulty(difficulty, button) {
+      const index = activeDifficultyFilters.indexOf(difficulty);
+      if (index > -1) {
+        activeDifficultyFilters.splice(index, 1);
+        button.classList.remove('active');
+      } else {
+        activeDifficultyFilters.push(difficulty);
+        button.classList.add('active');
+      }
+      renderSongList();
+    }
+
+    // 渲染谱面列表
+    function renderSongList() {
+      const searchTerm = document.getElementById('songSearch').value.toLowerCase();
+      const selectedLevel = parseInt(document.getElementById('tableLevel').value);
+      const songList = document.getElementById('songList');
+      songList.innerHTML = '';
+
+      const filteredSongs = allSongs.filter(chart => {
+        const matchesSearch = chart.title.toLowerCase().includes(searchTerm);
+        const hasActiveDifficulty = activeDifficultyFilters.includes(chart.difficulty);
+        const matchesLevel = chart.level >= selectedLevel;
+
+        // 检查该谱面是否已被添加
+        const alreadyAdded = sections.some(section =>
+          section.songs.some(s => s.id === chart.id)
+        );
+
+        return matchesSearch && hasActiveDifficulty && matchesLevel && !alreadyAdded;
+      });
+
+      filteredSongs.forEach(chart => {
+        const div = document.createElement('div');
+        div.className = 'song-item';
+        div.draggable = true;
+        div.dataset.songId = chart.id;
+
+        const diffLabel = chart.difficulty === 4 ? 'oni' : 'ura';
+
+        div.innerHTML = `
                     <div class="song-info">
                         <div class="song-title">${chart.title}</div>
                         <div class="song-no">${diffLabel} Lv.${chart.level}</div>
                     </div>
                 `;
 
-                div.addEventListener('dragstart', handleSongDragStart);
-                div.addEventListener('dragend', handleDragEnd);
+        div.addEventListener('dragstart', handleSongDragStart);
+        div.addEventListener('dragend', handleDragEnd);
 
-                songList.appendChild(div);
-            });
+        songList.appendChild(div);
+      });
 
-            updateStats();
-        }
+      updateStats();
+    }
 
-        // 添加分类
-        function addSection() {
-            const name = prompt('输入分类名称:');
-            if (name) {
-                const newSection = {
-                    name: name,
-                    order: sections.length,
-                    songs: []
-                };
-                sections.push(newSection);
-                renderSections();
+    // 添加分类
+    function addSection() {
+      const name = prompt('输入分类名称:');
+      if (name) {
+        const newSection = {
+          name: name,
+          order: sections.length,
+          songs: []
+        };
+        sections.push(newSection);
+        renderSections();
+      }
+    }
+
+    // 删除分类
+    function deleteSection(index) {
+      if (confirm(`确定删除分类 "${sections[index].name}" 吗？`)) {
+        sections.splice(index, 1);
+        updateSectionOrders();
+        renderSections();
+      }
+    }
+
+    // 改名分类
+    function renameSection(index) {
+      const currentName = sections[index].name;
+      const newName = prompt('输入新的分类名称:', currentName);
+      if (newName && newName.trim()) {
+        sections[index].name = newName.trim();
+        renderSections();
+      }
+    }
+
+    // 更新分类order
+    function updateSectionOrders() {
+      sections.forEach((section, index) => {
+        section.order = index;
+      });
+    }
+
+    // 处理分类拖拽开始
+    function handleSectionDragStart(e, index) {
+      if (!editMode) {
+        e.preventDefault();
+        return;
+      }
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('sectionMove', index.toString());
+      e.target.style.opacity = '0.5';
+    }
+
+    // 处理分类拖拽悬停
+    function handleSectionDragOver(e) {
+      if (!editMode) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const section = e.target.closest('.section');
+      if (section) {
+        section.style.borderColor = '#667eea';
+        section.style.backgroundColor = '#f0f7ff';
+      }
+    }
+
+    // 处理分类放置
+    function handleSectionDrop(e, toIndex) {
+      if (!editMode) {
+        e.preventDefault();
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+
+      const fromIndex = parseInt(e.dataTransfer.getData('sectionMove'));
+
+      if (fromIndex !== toIndex) {
+        // 交换分类位置
+        const temp = sections[fromIndex];
+        sections[fromIndex] = sections[toIndex];
+        sections[toIndex] = temp;
+        updateSectionOrders();
+        renderSections();
+      }
+
+      // 清除样式
+      document.querySelectorAll('.section').forEach(s => {
+        s.style.borderColor = '';
+        s.style.backgroundColor = '';
+      });
+    }
+
+    // 渲染分类
+    function renderSections() {
+      const container = document.getElementById('sectionsContainer');
+      container.innerHTML = '';
+
+      sections.forEach((section, index) => {
+        const div = document.createElement('div');
+        div.className = 'section';
+        div.dataset.sectionIndex = index;
+
+        if (editMode) {
+          div.draggable = true;
+          div.addEventListener('dragstart', (e) => {
+            // 只有从拖拽把手开始的拖拽才响应
+            if (e.target.textContent !== '☰') {
+              e.preventDefault();
             }
+          });
+          div.addEventListener('dragover', handleSectionDragOver);
+          div.addEventListener('drop', (e) => handleSectionDrop(e, index));
+          div.addEventListener('dragend', handleDragEnd);
+          div.style.cursor = 'default';
+        } else {
+          div.draggable = false;
+          div.style.cursor = 'default';
         }
 
-        // 删除分类
-        function deleteSection(index) {
-            if (confirm(`确定删除分类 "${sections[index].name}" 吗？`)) {
-                sections.splice(index, 1);
-                updateSectionOrders();
-                renderSections();
-            }
-        }
+        const header = document.createElement('div');
+        header.className = 'section-header';
 
-        // 改名分类
-        function renameSection(index) {
-            const currentName = sections[index].name;
-            const newName = prompt('输入新的分类名称:', currentName);
-            if (newName && newName.trim()) {
-                sections[index].name = newName.trim();
-                renderSections();
-            }
-        }
-
-        // 更新分类order
-        function updateSectionOrders() {
-            sections.forEach((section, index) => {
-                section.order = index;
-            });
-        }
-
-        // 处理分类拖拽开始
-        function handleSectionDragStart(e, index) {
-            if (!editMode) {
-                e.preventDefault();
-                return;
-            }
+        // 拖拽把手（只在编辑模式下显示）
+        if (editMode) {
+          const dragHandle = document.createElement('span');
+          dragHandle.innerHTML = '☰';
+          dragHandle.style.marginRight = '8px';
+          dragHandle.style.cursor = 'grab';
+          dragHandle.style.fontSize = '18px';
+          dragHandle.style.userSelect = 'none';
+          dragHandle.draggable = true;
+          dragHandle.addEventListener('dragstart', (e) => {
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('sectionMove', index.toString());
-            e.target.style.opacity = '0.5';
+            dragHandle.style.cursor = 'grabbing';
+          });
+          dragHandle.addEventListener('dragend', (e) => {
+            dragHandle.style.cursor = 'grab';
+          });
+          header.appendChild(dragHandle);
         }
 
-        // 处理分类拖拽悬停
-        function handleSectionDragOver(e) {
-            if (!editMode) return;
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            const section = e.target.closest('.section');
-            if (section) {
-                section.style.borderColor = '#667eea';
-                section.style.backgroundColor = '#f0f7ff';
-            }
-        }
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = `${section.name} (${section.songs.length})`;
+        nameSpan.style.cursor = 'pointer';
+        nameSpan.style.flex = '1';
+        nameSpan.title = '点击改名';
+        nameSpan.addEventListener('click', () => renameSection(index));
 
-        // 处理分类放置
-        function handleSectionDrop(e, toIndex) {
-            if (!editMode) {
-                e.preventDefault();
-                return;
-            }
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const fromIndex = parseInt(e.dataTransfer.getData('sectionMove'));
-            
-            if (fromIndex !== toIndex) {
-                // 交换分类位置
-                const temp = sections[fromIndex];
-                sections[fromIndex] = sections[toIndex];
-                sections[toIndex] = temp;
-                updateSectionOrders();
-                renderSections();
-            }
-            
-            // 清除样式
-            document.querySelectorAll('.section').forEach(s => {
-                s.style.borderColor = '';
-                s.style.backgroundColor = '';
-            });
-        }
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'remove-btn';
+        deleteBtn.style.padding = '2px 8px';
+        deleteBtn.style.fontSize = '12px';
+        deleteBtn.textContent = '删除';
+        deleteBtn.onclick = (e) => {
+          e.stopPropagation();
+          deleteSection(index);
+        };
 
-        // 渲染分类
-        function renderSections() {
-            const container = document.getElementById('sectionsContainer');
-            container.innerHTML = '';
+        header.appendChild(nameSpan);
+        header.appendChild(deleteBtn);
 
-            sections.forEach((section, index) => {
-                const div = document.createElement('div');
-                div.className = 'section';
-                div.dataset.sectionIndex = index;
-                
-                if (editMode) {
-                    div.draggable = true;
-                    div.addEventListener('dragstart', (e) => {
-                        // 只有从拖拽把手开始的拖拽才响应
-                        if (e.target.textContent !== '☰') {
-                            e.preventDefault();
-                        }
-                    });
-                    div.addEventListener('dragover', handleSectionDragOver);
-                    div.addEventListener('drop', (e) => handleSectionDrop(e, index));
-                    div.addEventListener('dragend', handleDragEnd);
-                    div.style.cursor = 'default';
-                } else {
-                    div.draggable = false;
-                    div.style.cursor = 'default';
-                }
+        const songsDiv = document.createElement('div');
+        songsDiv.className = 'section-songs';
+        songsDiv.addEventListener('dragover', handleDragOver);
+        songsDiv.addEventListener('drop', (e) => handleSongDrop(e, index));
+        songsDiv.addEventListener('dragleave', handleDragLeave);
 
-                const header = document.createElement('div');
-                header.className = 'section-header';
-                
-                // 拖拽把手（只在编辑模式下显示）
-                if (editMode) {
-                    const dragHandle = document.createElement('span');
-                    dragHandle.innerHTML = '☰';
-                    dragHandle.style.marginRight = '8px';
-                    dragHandle.style.cursor = 'grab';
-                    dragHandle.style.fontSize = '18px';
-                    dragHandle.style.userSelect = 'none';
-                    dragHandle.draggable = true;
-                    dragHandle.addEventListener('dragstart', (e) => {
-                        e.dataTransfer.effectAllowed = 'move';
-                        e.dataTransfer.setData('sectionMove', index.toString());
-                        dragHandle.style.cursor = 'grabbing';
-                    });
-                    dragHandle.addEventListener('dragend', (e) => {
-                        dragHandle.style.cursor = 'grab';
-                    });
-                    header.appendChild(dragHandle);
-                }
-                
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = `${section.name} (${section.songs.length})`;
-                nameSpan.style.cursor = 'pointer';
-                nameSpan.style.flex = '1';
-                nameSpan.title = '点击改名';
-                nameSpan.addEventListener('click', () => renameSection(index));
-                
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'remove-btn';
-                deleteBtn.style.padding = '2px 8px';
-                deleteBtn.style.fontSize = '12px';
-                deleteBtn.textContent = '删除';
-                deleteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteSection(index);
-                };
-                
-                header.appendChild(nameSpan);
-                header.appendChild(deleteBtn);
+        section.songs.forEach((song, songIndex) => {
+          const card = document.createElement('div');
+          card.className = 'song-card';
+          card.draggable = true;
+          card.dataset.songIndex = songIndex;
 
-                const songsDiv = document.createElement('div');
-                songsDiv.className = 'section-songs';
-                songsDiv.addEventListener('dragover', handleDragOver);
-                songsDiv.addEventListener('drop', (e) => handleSongDrop(e, index));
-                songsDiv.addEventListener('dragleave', handleDragLeave);
+          const difficulties = [];
+          if (song.difficulty === 4 || song.difficulty === '4') difficulties.push('oni');
+          if (song.difficulty === 5 || song.difficulty === '5') difficulties.push('ura');
 
-                section.songs.forEach((song, songIndex) => {
-                    const card = document.createElement('div');
-                    card.className = 'song-card';
-                    card.draggable = true;
-                    card.dataset.songIndex = songIndex;
-
-                    const difficulties = [];
-                    if (song.difficulty === 4 || song.difficulty === '4') difficulties.push('oni');
-                    if (song.difficulty === 5 || song.difficulty === '5') difficulties.push('ura');
-
-                    card.innerHTML = `
+          card.innerHTML = `
                         <div class="song-card-info">
                             <div class="song-card-title">${song.title}</div>
                             <div class="song-card-no">ID: ${song.songNo} | Diff: ${song.difficulty}</div>
@@ -891,294 +929,295 @@
                         <button class="remove-btn" onclick="removeSongFromSection(${index}, ${songIndex})">移除</button>
                     `;
 
-                    card.addEventListener('dragstart', (e) => handleCardDragStart(e, index, songIndex));
-                    card.addEventListener('dragend', handleDragEnd);
+          card.addEventListener('dragstart', (e) => handleCardDragStart(e, index, songIndex));
+          card.addEventListener('dragend', handleDragEnd);
 
-                    songsDiv.appendChild(card);
-                });
+          songsDiv.appendChild(card);
+        });
 
-                div.appendChild(header);
-                div.appendChild(songsDiv);
-                container.appendChild(div);
+        div.appendChild(header);
+        div.appendChild(songsDiv);
+        container.appendChild(div);
+      });
+    }
+
+    // 处理歌曲拖拽开始
+    function handleSongDragStart(e) {
+      const chartId = e.target.closest('.song-item').dataset.songId;
+      const chart = allSongs.find(s => s.id === chartId);
+
+      e.dataTransfer.effectAllowed = 'copy';
+      e.dataTransfer.setData('chartData', JSON.stringify({
+        id: chart.id,
+        songNo: chart.songNo,
+        difficulty: chart.difficulty,
+        level: chart.level,
+        title: chart.title
+      }));
+
+      e.target.closest('.song-item').classList.add('dragging');
+    }
+
+    // 处理卡片拖拽开始
+    function handleCardDragStart(e, sectionIndex, songIndex) {
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('cardMove', JSON.stringify({
+        fromSection: sectionIndex,
+        fromSong: songIndex
+      }));
+
+      e.target.closest('.song-card').classList.add('dragging');
+    }
+
+    // 处理拖拽结束
+    function handleDragEnd(e) {
+      e.target.closest('.song-item, .song-card')?.classList.remove('dragging');
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
+    }
+
+    // 处理拖拽悬停
+    function handleDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      const section = e.target.closest('.section') || e.target.closest('.section-songs')?.closest('.section');
+      section?.classList.add('drag-over');
+    }
+
+    // 处理拖拽离开
+    function handleDragLeave(e) {
+      const section = e.target.closest('.section');
+      if (section && !section.contains(e.relatedTarget)) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
+      }
+    }
+
+    // 处理歌曲放置
+    function handleSongDrop(e, sectionIndex) {
+      e.preventDefault();
+      e.stopPropagation();
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
+
+      const cardMoveData = e.dataTransfer.getData('cardMove');
+      if (cardMoveData) {
+        // 移动卡片
+        const { fromSection, fromSong } = JSON.parse(cardMoveData);
+        const song = sections[fromSection].songs[fromSong];
+
+        sections[fromSection].songs.splice(fromSong, 1);
+        sections[sectionIndex].songs.push(song);
+      } else {
+        // 添加新谱面
+        const chartData = e.dataTransfer.getData('chartData');
+        if (chartData) {
+          const chart = JSON.parse(chartData);
+
+          // 检查该谱面（songNo + difficulty）是否已存在
+          const exists = sections.some(s =>
+            s.songs.some(song => song.id === chart.id)
+          );
+
+          if (!exists) {
+            sections[sectionIndex].songs.push({
+              id: chart.id,
+              songNo: chart.songNo,
+              title: chart.title,
+              difficulty: chart.difficulty,
+              level: chart.level
             });
+          } else {
+            alert('该谱面已在其他分类中');
+          }
         }
+      }
 
-        // 处理歌曲拖拽开始
-        function handleSongDragStart(e) {
-            const chartId = e.target.closest('.song-item').dataset.songId;
-            const chart = allSongs.find(s => s.id === chartId);
-            
-            e.dataTransfer.effectAllowed = 'copy';
-            e.dataTransfer.setData('chartData', JSON.stringify({
-                id: chart.id,
-                songNo: chart.songNo,
-                difficulty: chart.difficulty,
-                level: chart.level,
-                title: chart.title
-            }));
-            
-            e.target.closest('.song-item').classList.add('dragging');
-        }
+      renderSections();
+      renderSongList();
+    }
 
-        // 处理卡片拖拽开始
-        function handleCardDragStart(e, sectionIndex, songIndex) {
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('cardMove', JSON.stringify({
-                fromSection: sectionIndex,
-                fromSong: songIndex
-            }));
-            
-            e.target.closest('.song-card').classList.add('dragging');
-        }
+    // 从分类中移除歌曲
+    function removeSongFromSection(sectionIndex, songIndex) {
+      sections[sectionIndex].songs.splice(songIndex, 1);
+      renderSections();
+      renderSongList();
+    }
 
-        // 处理拖拽结束
-        function handleDragEnd(e) {
-            e.target.closest('.song-item, .song-card')?.classList.remove('dragging');
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
-        }
+    // 清空所有
+    function clearAll() {
+      if (confirm('确定要清空所有分类中的歌曲吗？')) {
+        sections.forEach(section => section.songs = []);
+        renderSections();
+        renderSongList();
+      }
+    }
 
-        // 处理拖拽悬停
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'copy';
-            const section = e.target.closest('.section') || e.target.closest('.section-songs')?.closest('.section');
-            section?.classList.add('drag-over');
-        }
+    // 生成JSON
+    function generateJSON() {
+      const level = parseInt(document.getElementById('tableLevel').value);
+      const type = document.getElementById('tableType').value;
+      const name = document.getElementById('tableName').value;
 
-        // 处理拖拽离开
-        function handleDragLeave(e) {
-            const section = e.target.closest('.section');
-            if (section && !section.contains(e.relatedTarget)) {
-                document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
-            }
-        }
+      return {
+        name: name,
+        level: level,
+        type: type,
+        sections: sections.map(s => ({
+          name: s.name,
+          order: s.order,
+          songs: s.songs.map(song => ({
+            id: song.songNo.toString(),
+            difficulty: parseInt(song.difficulty)
+          }))
+        }))
+      };
+    }
 
-        // 处理歌曲放置
-        function handleSongDrop(e, sectionIndex) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('drag-over'));
+    // 导出JSON
+    function exportJSON() {
+      const json = generateJSON();
+      document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
+      document.getElementById('exportModal').style.display = 'block';
+    }
 
-            const cardMoveData = e.dataTransfer.getData('cardMove');
-            if (cardMoveData) {
-                // 移动卡片
-                const { fromSection, fromSong } = JSON.parse(cardMoveData);
-                const song = sections[fromSection].songs[fromSong];
-                
-                sections[fromSection].songs.splice(fromSong, 1);
-                sections[sectionIndex].songs.push(song);
-            } else {
-                // 添加新谱面
-                const chartData = e.dataTransfer.getData('chartData');
-                if (chartData) {
-                    const chart = JSON.parse(chartData);
-                    
-                    // 检查该谱面（songNo + difficulty）是否已存在
-                    const exists = sections.some(s => 
-                        s.songs.some(song => song.id === chart.id)
-                    );
+    // 复制JSON到剪贴板
+    function copyJSON() {
+      const text = document.getElementById('jsonOutput').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        alert('已复制到剪贴板');
+      });
+    }
 
-                    if (!exists) {
-                        sections[sectionIndex].songs.push({
-                            id: chart.id,
-                            songNo: chart.songNo,
-                            title: chart.title,
-                            difficulty: chart.difficulty,
-                            level: chart.level
-                        });
-                    } else {
-                        alert('该谱面已在其他分类中');
-                    }
-                }
-            }
+    // 下载JSON文件
+    function downloadJSON() {
+      const json = generateJSON();
+      const dataStr = JSON.stringify(json, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
 
-            renderSections();
-            renderSongList();
-        }
+      const level = document.getElementById('tableLevel').value;
+      const type = document.getElementById('tableType').value;
+      link.download = `${level}${type}.json`;
 
-        // 从分类中移除歌曲
-        function removeSongFromSection(sectionIndex, songIndex) {
-            sections[sectionIndex].songs.splice(songIndex, 1);
-            renderSections();
-            renderSongList();
-        }
+      link.click();
+      URL.revokeObjectURL(url);
+    }
 
-        // 清空所有
-        function clearAll() {
-            if (confirm('确定要清空所有分类中的歌曲吗？')) {
-                sections.forEach(section => section.songs = []);
-                renderSections();
-                renderSongList();
-            }
-        }
+    // 关闭导出模态框
+    function closeExportModal() {
+      document.getElementById('exportModal').style.display = 'none';
+    }
 
-        // 生成JSON
-        function generateJSON() {
-            const level = parseInt(document.getElementById('tableLevel').value);
-            const type = document.getElementById('tableType').value;
-            const name = document.getElementById('tableName').value;
+    // 导入JSON
+    function importJSON() {
+      document.getElementById('jsonInput').value = '';
+      document.getElementById('importJsonFile').value = '';
+      document.getElementById('importModal').style.display = 'block';
+    }
 
-            return {
-                name: name,
-                level: level,
-                type: type,
-                sections: sections.map(s => ({
-                    name: s.name,
-                    order: s.order,
-                    songs: s.songs.map(song => ({
-                        id: song.songNo.toString(),
-                        difficulty: parseInt(song.difficulty)
-                    }))
-                }))
+    // 处理导入文件选择
+    document.addEventListener('DOMContentLoaded', function () {
+      const importFileInput = document.getElementById('importJsonFile');
+      if (importFileInput) {
+        importFileInput.addEventListener('change', function (e) {
+          if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+              document.getElementById('jsonInput').value = event.target.result;
             };
-        }
-
-        // 导出JSON
-        function exportJSON() {
-            const json = generateJSON();
-            document.getElementById('jsonOutput').textContent = JSON.stringify(json, null, 2);
-            document.getElementById('exportModal').style.display = 'block';
-        }
-
-        // 复制JSON到剪贴板
-        function copyJSON() {
-            const text = document.getElementById('jsonOutput').textContent;
-            navigator.clipboard.writeText(text).then(() => {
-                alert('已复制到剪贴板');
-            });
-        }
-
-        // 下载JSON文件
-        function downloadJSON() {
-            const json = generateJSON();
-            const dataStr = JSON.stringify(json, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            
-            const level = document.getElementById('tableLevel').value;
-            const type = document.getElementById('tableType').value;
-            link.download = `${level}${type}.json`;
-            
-            link.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // 关闭导出模态框
-        function closeExportModal() {
-            document.getElementById('exportModal').style.display = 'none';
-        }
-
-        // 导入JSON
-        function importJSON() {
-            document.getElementById('jsonInput').value = '';
-            document.getElementById('importJsonFile').value = '';
-            document.getElementById('importModal').style.display = 'block';
-        }
-
-        // 处理导入文件选择
-        document.addEventListener('DOMContentLoaded', function() {
-            const importFileInput = document.getElementById('importJsonFile');
-            if (importFileInput) {
-                importFileInput.addEventListener('change', function(e) {
-                    if (e.target.files && e.target.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(event) {
-                            document.getElementById('jsonInput').value = event.target.result;
-                        };
-                        reader.readAsText(e.target.files[0]);
-                    }
-                });
-            }
+            reader.readAsText(e.target.files[0]);
+          }
         });
+      }
+    });
 
-        // 加载导入的JSON
-        function loadImportedJSON() {
-            const jsonText = document.getElementById('jsonInput').value;
-            try {
-                const data = JSON.parse(jsonText);
-                
-                // 验证结构
-                if (!data.sections || !Array.isArray(data.sections)) {
-                    throw new Error('无效的 JSON 结构');
-                }
+    // 加载导入的JSON
+    function loadImportedJSON() {
+      const jsonText = document.getElementById('jsonInput').value;
+      try {
+        const data = JSON.parse(jsonText);
 
-                // 加载数据
-                document.getElementById('tableName').value = data.name || '';
-                document.getElementById('tableLevel').value = data.level || 10;
-                document.getElementById('tableType').value = data.type || 'fc';
-
-                sections = data.sections.map(s => ({
-                    name: s.name,
-                    order: s.order,
-                    songs: s.songs.map(song => {
-                        // 根据 songNo 和 difficulty 查找歌曲数据
-                        const songData = allSongs.find(chart => 
-                            chart.songNo === song.id && chart.difficulty === song.difficulty
-                        );
-                        return {
-                            id: `${song.id}_${song.difficulty}`,
-                            songNo: song.id,
-                            title: songData?.title || '未知歌曲',
-                            difficulty: song.difficulty,
-                            level: songData?.level || 0
-                        };
-                    })
-                }));
-
-                renderSections();
-                renderSongList();
-                closeImportModal();
-                alert('导入成功');
-            } catch (error) {
-                alert('导入失败: ' + error.message);
-            }
+        // 验证结构
+        if (!data.sections || !Array.isArray(data.sections)) {
+          throw new Error('无效的 JSON 结构');
         }
 
-        // 关闭导入模态框
-        function closeImportModal() {
-            document.getElementById('importModal').style.display = 'none';
-        }
+        // 加载数据
+        document.getElementById('tableName').value = data.name || '';
+        document.getElementById('tableLevel').value = data.level || 10;
+        document.getElementById('tableType').value = data.type || 'fc';
 
-        // 搜索功能
-        document.getElementById('songSearch').addEventListener('input', () => {
-            renderSongList();
-        });
+        sections = data.sections.map(s => ({
+          name: s.name,
+          order: s.order,
+          songs: s.songs.map(song => {
+            // 根据 songNo 和 difficulty 查找歌曲数据
+            const songData = allSongs.find(chart =>
+              chart.songNo === song.id && chart.difficulty === song.difficulty
+            );
+            return {
+              id: `${song.id}_${song.difficulty}`,
+              songNo: song.id,
+              title: songData?.title || '未知歌曲',
+              difficulty: song.difficulty,
+              level: songData?.level || 0
+            };
+          })
+        }));
 
-        // 星级改变时重新筛选
-        document.getElementById('tableLevel').addEventListener('change', () => {
-            renderSongList();
-        });
-        function updateStats() {
-            const searchTerm = document.getElementById('songSearch').value.toLowerCase();
-            const selectedLevel = parseInt(document.getElementById('tableLevel').value);
-            const filtered = allSongs.filter(chart => {
-                const matchesSearch = chart.title.toLowerCase().includes(searchTerm);
-                const hasActiveDifficulty = activeDifficultyFilters.includes(chart.difficulty);
-                const matchesLevel = chart.level >= selectedLevel;
-                return matchesSearch && hasActiveDifficulty && matchesLevel;
-            });
+        renderSections();
+        renderSongList();
+        closeImportModal();
+        alert('导入成功');
+      } catch (error) {
+        alert('导入失败: ' + error.message);
+      }
+    }
 
-            const added = sections.reduce((count, section) => count + section.songs.length, 0);
+    // 关闭导入模态框
+    function closeImportModal() {
+      document.getElementById('importModal').style.display = 'none';
+    }
 
-            document.getElementById('totalSongs').textContent = filtered.length;
-            document.getElementById('addedSongs').textContent = added;
-        }
+    // 搜索功能
+    document.getElementById('songSearch').addEventListener('input', () => {
+      renderSongList();
+    });
 
-        // 初始化
-        window.addEventListener('load', () => {
-            initSections();
-        });
+    // 星级改变时重新筛选
+    document.getElementById('tableLevel').addEventListener('change', () => {
+      renderSongList();
+    });
+    function updateStats() {
+      const searchTerm = document.getElementById('songSearch').value.toLowerCase();
+      const selectedLevel = parseInt(document.getElementById('tableLevel').value);
+      const filtered = allSongs.filter(chart => {
+        const matchesSearch = chart.title.toLowerCase().includes(searchTerm);
+        const hasActiveDifficulty = activeDifficultyFilters.includes(chart.difficulty);
+        const matchesLevel = chart.level >= selectedLevel;
+        return matchesSearch && hasActiveDifficulty && matchesLevel;
+      });
 
-        // 关闭模态框（点击外部）
-        window.addEventListener('click', (e) => {
-            const exportModal = document.getElementById('exportModal');
-            const importModal = document.getElementById('importModal');
-            
-            if (e.target === exportModal) closeExportModal();
-            if (e.target === importModal) closeImportModal();
-        });
-    </script>
+      const added = sections.reduce((count, section) => count + section.songs.length, 0);
+
+      document.getElementById('totalSongs').textContent = filtered.length;
+      document.getElementById('addedSongs').textContent = added;
+    }
+
+    // 初始化
+    window.addEventListener('load', () => {
+      initSections();
+    });
+
+    // 关闭模态框（点击外部）
+    window.addEventListener('click', (e) => {
+      const exportModal = document.getElementById('exportModal');
+      const importModal = document.getElementById('importModal');
+
+      if (e.target === exportModal) closeExportModal();
+      if (e.target === importModal) closeImportModal();
+    });
+  </script>
 </body>
+
 </html>
